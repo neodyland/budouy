@@ -68,6 +68,7 @@ compile_error!("Either the `std` or `alloc` feature must be enabled.");
 
 pub(crate) mod map {
     #[cfg(feature = "std")]
+    #[expect(clippy::absolute_paths)]
     pub type HashMap<K, V> = std::collections::HashMap<K, V>;
 
     #[cfg(all(feature = "alloc", not(feature = "std")))]

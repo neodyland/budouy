@@ -16,15 +16,16 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
+          targets: wasm32-unknown-unknown
       - name: Rust cache
         uses: Swatinem/rust-cache@v2
       - name: Test
         run: cargo test --all-targets --features "html,vendored-models,cli"
       - name: Clippy
         run: cargo clippy --all-targets --features "html,vendored-models,cli"
-      - name: Check no_std (alloc)
-        run: cargo check --no-default-features --features alloc
-      - name: Clippy no_std (alloc)
-        run: cargo clippy --no-default-features --features alloc --lib
+      - name: Check wasm build
+        run: cargo check --target wasm32-unknown-unknown --no-default-features --features wasm
+      - name: Clippy wasm
+        run: cargo clippy --target wasm32-unknown-unknown --no-default-features --features wasm --lib
       - name: Fmt
         run: cargo fmt --all -- --check
