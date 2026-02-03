@@ -223,21 +223,33 @@
     }
 
     /* Features */
+    .features-section {
+      padding: 4rem 2rem;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      animation: slideUp 0.5s ease-out backwards;
+      animation-delay: 0.2s;
+    }
+
+    .features-section h2 {
+      text-align: center;
+      display: block;
+      border-bottom: none;
+      margin-bottom: 2.5rem;
+    }
+
     .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
     }
 
     .feature {
-      padding: 1.5rem;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s;
-    }
-
-    .feature:hover {
-      border-color: var(--fg);
+      flex: 1;
+      max-width: 240px;
+      text-align: center;
     }
 
     .feature h3 {
@@ -246,9 +258,45 @@
       margin-bottom: 0.5rem;
     }
 
+    .feature h3::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 2px;
+      background: var(--accent);
+      margin: 0 auto 1rem;
+    }
+
     .feature p {
       font-size: 0.875rem;
       color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 800px) {
+      .features {
+        flex-wrap: wrap;
+      }
+
+      .feature {
+        flex: 0 0 calc(50% - 1rem);
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .feature {
+        flex: 0 0 100%;
+      }
+    }
+
+    /* Usage */
+    .usage-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+      animation: slideUp 0.5s ease-out backwards;
+      animation-delay: 0.3s;
     }
 
     /* Footer */
@@ -344,40 +392,40 @@
         </div>
       </div>
     </section>
+  </main>
 
-    <section>
-      <h2>Features</h2>
-      <div class="features">
-        <div class="feature">
-          <h3>No Dependencies</h3>
-          <p>Pure Rust implementation with optional features.</p>
-        </div>
-        <div class="feature">
-          <h3>WASM Ready</h3>
-          <p>Works in browsers via WebAssembly.</p>
-        </div>
-        <div class="feature">
-          <h3>Multi-language</h3>
-          <p>Japanese, Chinese (Simplified/Traditional), and Thai.</p>
-        </div>
-        <div class="feature">
-          <h3>no_std</h3>
-          <p>Supports embedded and constrained environments.</p>
-        </div>
+  <section class="features-section">
+    <h2>Features</h2>
+    <div class="features">
+      <div class="feature">
+        <h3>No Dependencies</h3>
+        <p>Pure Rust implementation with optional features.</p>
       </div>
-    </section>
+      <div class="feature">
+        <h3>WASM Ready</h3>
+        <p>Works in browsers via WebAssembly.</p>
+      </div>
+      <div class="feature">
+        <h3>Multi-language</h3>
+        <p>Japanese, Chinese (Simplified/Traditional), and Thai.</p>
+      </div>
+      <div class="feature">
+        <h3>no_std</h3>
+        <p>Supports embedded and constrained environments.</p>
+      </div>
+    </div>
+  </section>
 
-    <section>
-      <h2>Usage</h2>
-      <pre><code>import init, { BudouY } from 'budouy';
+  <section class="usage-section">
+    <h2>Usage</h2>
+    <pre><code>import init, { BudouY } from 'budouy';
 
 await init();
 
 const parser = BudouY.japanese();
 const chunks = parser.parse("今日は天気がいいです");
 // ["今日は", "天気が", "いいです"]</code></pre>
-    </section>
-  </main>
+  </section>
 
   <footer>
     <p>
@@ -392,6 +440,7 @@ const chunks = parser.parse("今日は天気がいいです");
 
     let parser = null;
     let currentLang = 'ja';
+    let isComposing = false;
 
     const input = document.getElementById('input');
     const output = document.getElementById('output');
@@ -430,9 +479,14 @@ const chunks = parser.parse("今日は天気がいいです");
       }
 
       const chunks = parser.parse(text);
-      output.innerHTML = chunks
+      const html = chunks
         .map(chunk => `<span class="chunk">${escapeHtml(chunk)}</span>`)
         .join('<span class="separator">|</span>');
+
+      // Only update if content changed to reduce reflow
+      if (output.innerHTML !== html) {
+        output.innerHTML = html;
+      }
     }
 
     function escapeHtml(text) {
@@ -442,7 +496,21 @@ const chunks = parser.parse("今日は天気がいいです");
     }
 
     // Event listeners
-    input.addEventListener('input', parse);
+    input.addEventListener('compositionstart', () => {
+      isComposing = true;
+    });
+
+    input.addEventListener('compositionend', () => {
+      isComposing = false;
+      parse();
+    });
+
+    input.addEventListener('input', () => {
+      // Skip parsing during IME composition
+      if (!isComposing) {
+        parse();
+      }
+    });
 
     langBtns.forEach(btn => {
       btn.addEventListener('click', () => {
