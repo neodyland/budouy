@@ -107,7 +107,10 @@ pub enum ModelError {
 ///
 /// The outer map is keyed by feature names (e.g., `UW1`, `BW2`), and the inner
 /// map contains string features and their weights.
-pub type Model = HashMap<FeatureKey, HashMap<String, i32>>;
+pub type Model = HashMap<FeatureKey, InnerModel>;
+
+/// Inner model map containing string features and their weights.
+pub type InnerModel = HashMap<String, i32>;
 
 /// Parse a JSON string into a [`Model`].
 ///
