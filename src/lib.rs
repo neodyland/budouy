@@ -13,7 +13,7 @@
 //!
 //! Note: `std` and `alloc` are mutually exclusive.
 //!
-//! # no_std
+//! # `no_std`
 //! This crate supports `no_std` with `alloc`. Disable default features and enable `alloc`:
 //! ```toml
 //! budouy = { version = "0.1", default-features = false, features = ["alloc"] }
@@ -80,6 +80,9 @@ mod parser;
 
 #[cfg(feature = "html")]
 mod html_processor;
+
+#[cfg(feature = "wasm")]
+mod wasm;
 
 pub use model::Model;
 pub use parser::Parser;

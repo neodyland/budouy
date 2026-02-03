@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BudouY - Semantic Line Break Parser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Playfair+Display:wght@700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #faf9f7;
+      --fg: #1a1a1a;
+      --accent: #c23a3a;
+      --muted: #6b6b6b;
+      --border: #e0e0e0;
+      --code-bg: #f0efed;
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'Noto Sans JP', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      padding: 3rem 2rem 4rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 40ch;
+      margin: 0 auto;
+    }
+
+    /* Main */
+    main {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    section {
+      margin-bottom: 4rem;
+      animation: slideUp 0.5s ease-out backwards;
+    }
+
+    section:nth-child(1) { animation-delay: 0.1s; }
+    section:nth-child(2) { animation-delay: 0.2s; }
+    section:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--fg);
+      display: inline-block;
+    }
+
+    /* Demo Area */
+    .demo-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-size: 0.875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+
+    textarea {
+      font-family: var(--font-body);
+      font-size: 1.125rem;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      background: white;
+      resize: vertical;
+      min-height: 120px;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: var(--fg);
+    }
+
+    .lang-select {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .lang-btn {
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+      border: 2px solid var(--border);
+      background: white;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .lang-btn:hover {
+      border-color: var(--fg);
+    }
+
+    .lang-btn.active {
+      background: var(--fg);
+      color: white;
+      border-color: var(--fg);
+    }
+
+    .output-box {
+      background: white;
+      border: 2px solid var(--fg);
+      padding: 1.5rem;
+      min-height: 100px;
+      font-size: 1.25rem;
+      line-height: 2;
+    }
+
+    .output-box .chunk {
+      display: inline;
+      position: relative;
+    }
+
+    .output-box .chunk::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      opacity: 0.6;
+    }
+
+    .output-box .separator {
+      color: var(--accent);
+      font-weight: 700;
+      padding: 0 2px;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* Code Block */
+    pre {
+      background: var(--code-bg);
+      border-left: 4px solid var(--fg);
+      padding: 1.5rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: var(--font-mono);
+    }
+
+    .inline-code {
+      background: var(--code-bg);
+      padding: 0.15rem 0.4rem;
+      font-size: 0.9em;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .feature {
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    .feature:hover {
+      border-color: var(--fg);
+    }
+
+    .feature h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature p {
+      font-size: 0.875rem;
+      color: var(--muted);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    footer a {
+      color: var(--fg);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      transition: border-color 0.2s;
+    }
+
+    footer a:hover {
+      border-color: var(--fg);
+    }
+
+    /* Loading */
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--fg);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header {
+        padding: 2rem 1rem 3rem;
+      }
+
+      main {
+        padding: 2rem 1rem;
+      }
+
+      .output-box {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="logo">Budou<span>Y</span></h1>
+    <p class="tagline">Rust port of BudouX. Semantic line breaks for CJK text.</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Try It</h2>
+      <div class="demo-container">
+        <div class="input-group">
+          <label for="lang">Language</label>
+          <div class="lang-select">
+            <button class="lang-btn active" data-lang="ja">Japanese</button>
+            <button class="lang-btn" data-lang="zh-hans">Simplified Chinese</button>
+            <button class="lang-btn" data-lang="zh-hant">Traditional Chinese</button>
+            <button class="lang-btn" data-lang="th">Thai</button>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="input">Input Text</label>
+          <textarea id="input" placeholder="Enter text to parse...">今日は天気がいいので、公園に散歩に行きました。</textarea>
+        </div>
+
+        <div class="input-group">
+          <label>Output</label>
+          <div id="output" class="output-box">
+            <span class="loading">
+              <span class="spinner"></span>
+              Loading WASM module...
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Features</h2>
+      <div class="features">
+        <div class="feature">
+          <h3>No Dependencies</h3>
+          <p>Pure Rust implementation with optional features.</p>
+        </div>
+        <div class="feature">
+          <h3>WASM Ready</h3>
+          <p>Works in browsers via WebAssembly.</p>
+        </div>
+        <div class="feature">
+          <h3>Multi-language</h3>
+          <p>Japanese, Chinese (Simplified/Traditional), and Thai.</p>
+        </div>
+        <div class="feature">
+          <h3>no_std</h3>
+          <p>Supports embedded and constrained environments.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Usage</h2>
+      <pre><code>import init, { BudouY } from 'budouy';
+
+await init();
+
+const parser = BudouY.japanese();
+const chunks = parser.parse("今日は天気がいいです");
+// ["今日は", "天気が", "いいです"]</code></pre>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/neodyland/budouy" target="_blank" rel="noopener">GitHub</a>
+      &nbsp;·&nbsp;
+      Built with Rust + WebAssembly
+    </p>
+  </footer>
+
+  <script type="module">
+    import init, { BudouY } from './pkg/budouy.js';
+
+    let parser = null;
+    let currentLang = 'ja';
+
+    const input = document.getElementById('input');
+    const output = document.getElementById('output');
+    const langBtns = document.querySelectorAll('.lang-btn');
+
+    async function initWasm() {
+      try {
+        await init();
+        parser = BudouY.japanese();
+        parse();
+      } catch (e) {
+        output.innerHTML = '<span class="empty-state">Failed to load WASM module</span>';
+        console.error(e);
+      }
+    }
+
+    function getParser(lang) {
+      switch (lang) {
+        case 'ja': return BudouY.japanese();
+        case 'zh-hans': return BudouY.simplifiedChinese();
+        case 'zh-hant': return BudouY.traditionalChinese();
+        case 'th': return BudouY.thai();
+        default: return BudouY.japanese();
+      }
+    }
+
+    function parse() {
+      const text = input.value.trim();
+      if (!text) {
+        output.innerHTML = '<span class="empty-state">Enter text above to see the result</span>';
+        return;
+      }
+
+      if (!parser) {
+        return;
+      }
+
+      const chunks = parser.parse(text);
+      output.innerHTML = chunks
+        .map(chunk => `<span class="chunk">${escapeHtml(chunk)}</span>`)
+        .join('<span class="separator">|</span>');
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Event listeners
+    input.addEventListener('input', parse);
+
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        langBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLang = btn.dataset.lang;
+        parser = getParser(currentLang);
+        parse();
+      });
+    });
+
+    initWasm();
+  </script>
+</body>
+</html>
