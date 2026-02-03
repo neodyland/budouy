@@ -7,7 +7,7 @@ license = "Apache-2.0"
 repository = "https://github.com/neodyland/budouy"
 readme = "README.md"
 keywords = ["budoux", "text", "segmentation", "linebreak", "nlp"]
-categories = ["text-processing", "internationalization"]
+categories = ["text-processing", "internationalization", "command-line-utilities", "no-std"]
 
 rust-version = "1.85.1"
 include = [
