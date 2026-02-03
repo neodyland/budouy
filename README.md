@@ -5,7 +5,7 @@
 [![Docs.rs](https://img.shields.io/docsrs/budouy)](https://docs.rs/budouy)
 [![CI](https://github.com/neodyland/budouy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/neodyland/budouy/actions/workflows/ci.yml)
 
-Rust port of `BudouX` with optional HTML processing and a small CLI.
+Rust port of [`BudouX`](https://github.com/google/budoux) with optional HTML processing and a small CLI.
 
 ## Features
 
