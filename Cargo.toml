@@ -1,0 +1,70 @@
+[package]
+name = "budouy"
+version = "0.1.0"
+edition = "2024"
+description = "Rust port of BudouX with optional HTML processing and CLI"
+license = "Apache-2.0"
+repository = "https://github.com/neodyland/budouy"
+readme = "README.md"
+keywords = ["budoux", "text", "segmentation", "linebreak", "nlp"]
+categories = ["text-processing", "internationalization"]
+
+rust-version = "1.85.1"
+include = [
+    "Cargo.toml",
+    "README.md",
+    "LICENSE",
+    "src/**",
+    "examples/**",
+    "tests/**",
+]
+
+[dependencies]
+serde = { version = "1", default-features = false, features = ["derive", "alloc"] }
+serde_json = { version = "1", default-features = false, features = ["alloc"] }
+thiserror = { version = "2", default-features = false }
+hashbrown = { version = "0.16", optional = true, default-features = false, features = ["default-hasher", "serde"] }
+spin = { version = "0.10", optional = true, default-features = false, features = ["once", "lazy"] }
+
+html5ever = { version = "0.38.0", optional = true }
+kuchikikiki = { version = "0.9.2", optional = true }
+seahorse = { version = "2", optional = true }
+
+[features]
+default = ["std"]
+std = ["serde/std", "serde_json/std", "thiserror/std"]
+alloc = ["dep:hashbrown", "dep:spin"]
+cli = ["std", "dep:seahorse", "vendored-models"]
+html = ["std", "dep:html5ever", "dep:kuchikikiki"]
+vendored-models = []
+
+[[bin]]
+name = "budouy"
+path = "src/main.rs"
+required-features = ["cli"]
+
+[[example]]
+name = "japanese_split"
+required-features = ["vendored-models"]
+
+[[example]]
+name = "html_parse"
+required-features = ["html", "vendored-models"]
+
+[package.metadata.docs.rs]
+features = ["std", "html", "vendored-models"]
+rustdoc-args = ["--cfg", "docsrs"]
+
+[lints.rust]
+missing_debug_implementations = "warn"
+missing_docs = "warn"
+
+[lints.clippy]
+absolute_paths = "warn"
+allow_attributes = "deny"
+exhaustive_enums = "warn"
+exhaustive_structs = "warn"
+nursery = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+self_only_used_in_recursion = "allow"
+unwrap_used = "deny"
