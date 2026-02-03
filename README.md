@@ -5,7 +5,7 @@
 [![Docs.rs](https://img.shields.io/docsrs/budouy)](https://docs.rs/budouy)
 [![CI](https://github.com/neodyland/budouy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/neodyland/budouy/actions/workflows/ci.yml)
 
-Rust port of [`BudouX`](https://github.com/google/budoux) with optional HTML processing and a small CLI.
+Rust port of [`BudouX`](https://github.com/google/budoux) with optional HTML processing, WebAssembly support, and a small CLI.
 
 ## Features
 
@@ -14,6 +14,7 @@ Rust port of [`BudouX`](https://github.com/google/budoux) with optional HTML pro
 - `vendored-models`: bundles default Japanese, Simplified Chinese, Traditional Chinese, and Thai models.
 - `html`: enables HTML processing utilities based on `kuchikikiki` (requires `std`).
 - `cli`: enables the `budouy` CLI (requires `std`, implies `vendored-models`).
+- `wasm`: enables WebAssembly bindings via `wasm-bindgen` (implies `alloc` and `vendored-models`).
 
 Note: `std` and `alloc` are mutually exclusive.
 
@@ -57,6 +58,31 @@ let html_parser = HTMLProcessingParser::new(parser, None);
 let input = "今日は<strong>良い</strong>天気です";
 let output = html_parser.translate_html_string(input);
 println!("{}", output);
+```
+
+### WebAssembly
+
+Build for web (requires `wasm-pack`):
+
+```bash
+wasm-pack build --target web --no-default-features --features wasm
+```
+
+Use from JavaScript:
+
+```javascript
+import init, { BudouY } from './pkg/budouy.js';
+
+await init();
+
+const parser = BudouY.japanese();
+const chunks = parser.parse("今日は良い天気です");
+console.log(chunks); // ["今日は", "良い", "天気です"]
+
+// Other languages
+const zhHans = BudouY.simplifiedChinese();
+const zhHant = BudouY.traditionalChinese();
+const thai = BudouY.thai();
 ```
 
 ### CLI

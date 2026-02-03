@@ -10,6 +10,7 @@
 //! - `vendored-models`: Bundles default Japanese/Chinese/Thai models.
 //! - `html`: Enables HTML processing utilities based on `kuchikikiki` (requires `std`).
 //! - `cli`: Enables the `budouy` CLI (requires `std`, implies `vendored-models`).
+//! - `wasm`: Enables WebAssembly bindings via `wasm-bindgen` (implies `alloc` and `vendored-models`).
 //!
 //! Note: `std` and `alloc` are mutually exclusive.
 //!
@@ -53,6 +54,22 @@
 //! let input = "今日は<strong>良い</strong>天気です";
 //! let output = html_parser.translate_html_string(input);
 //! println!("{}", output);
+//! ```
+//!
+//! # WebAssembly
+//!
+//! Build for web with `wasm-pack`:
+//! ```bash
+//! wasm-pack build --target web --no-default-features --features wasm
+//! ```
+//!
+//! Use from JavaScript:
+//! ```javascript
+//! import init, { BudouY } from './pkg/budouy.js';
+//!
+//! await init();
+//! const parser = BudouY.japanese();
+//! const chunks = parser.parse("今日は良い天気です");
 //! ```
 
 #![cfg_attr(not(feature = "std"), no_std)]
