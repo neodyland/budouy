@@ -11,6 +11,9 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    environment:
+      name: demo
+      url: https://budouy.pages.dev
 
     steps:
       - name: Checkout

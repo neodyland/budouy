@@ -4,8 +4,11 @@
 [![Crates.io](https://img.shields.io/crates/v/budouy)](https://crates.io/crates/budouy)
 [![Docs.rs](https://img.shields.io/docsrs/budouy)](https://docs.rs/budouy)
 [![CI](https://github.com/neodyland/budouy/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/neodyland/budouy/actions/workflows/ci.yml)
+[![Demo](https://img.shields.io/badge/demo-budouy.pages.dev-blue)](https://budouy.pages.dev)
 
 Rust port of [`BudouX`](https://github.com/google/budoux) with optional HTML processing, WebAssembly support, and a small CLI.
+
+**[Try the live demo](https://budouy.pages.dev)**
 
 ## Features
 
