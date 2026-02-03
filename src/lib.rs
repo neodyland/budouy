@@ -102,6 +102,7 @@ mod html_processor;
 #[cfg(feature = "wasm")]
 mod wasm;
 
+#[doc(inline)]
 pub use model::Model;
 pub use parser::Parser;
 
