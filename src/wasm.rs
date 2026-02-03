@@ -7,11 +7,11 @@ use alloc::vec::Vec;
 
 use wasm_bindgen::prelude::*;
 
-use crate::model::{
-    load_default_japanese_parser, load_default_simplified_chinese_parser,
-    load_default_thai_parser, load_default_traditional_chinese_parser,
-};
 use crate::Parser;
+use crate::model::{
+    load_default_japanese_parser, load_default_simplified_chinese_parser, load_default_thai_parser,
+    load_default_traditional_chinese_parser,
+};
 
 /// `BudouY` parser for JavaScript.
 ///
