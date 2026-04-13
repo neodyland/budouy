@@ -30,7 +30,7 @@ hashbrown = { version = "0.16", optional = true, default-features = false, featu
 spin = { version = "0.10", optional = true, default-features = false, features = ["once", "lazy"] }
 
 html5ever = { version = "0.38.0", optional = true }
-kuchikikiki = { version = "0.9.2", optional = true }
+kuchikikiki = { version = "0.10.0", optional = true }
 seahorse = { version = "2", optional = true }
 wasm-bindgen = { version = "0.2", optional = true }
 
