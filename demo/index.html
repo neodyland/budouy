@@ -44,12 +44,6 @@
       padding: 3rem 2rem 4rem;
       text-align: center;
       border-bottom: 1px solid var(--border);
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     .logo {
@@ -67,7 +61,6 @@
     .tagline {
       font-size: 1.1rem;
       color: var(--muted);
-      max-width: 40ch;
       margin: 0 auto;
     }
 
@@ -80,16 +73,6 @@
 
     section {
       margin-bottom: 4rem;
-      animation: slideUp 0.5s ease-out backwards;
-    }
-
-    section:nth-child(1) { animation-delay: 0.1s; }
-    section:nth-child(2) { animation-delay: 0.2s; }
-    section:nth-child(3) { animation-delay: 0.3s; }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
@@ -227,8 +210,6 @@
       padding: 4rem 2rem;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      animation: slideUp 0.5s ease-out backwards;
-      animation-delay: 0.2s;
     }
 
     .features-section h2 {
@@ -295,8 +276,6 @@
       max-width: 800px;
       margin: 0 auto;
       padding: 4rem 2rem;
-      animation: slideUp 0.5s ease-out backwards;
-      animation-delay: 0.3s;
     }
 
     /* Footer */
@@ -359,7 +338,7 @@
 <body>
   <header>
     <h1 class="logo">Budou<span>Y</span></h1>
-    <p class="tagline">Rust port of BudouX. Semantic line breaks for CJK text.</p>
+    <p class="tagline">Rust port of BudouX, Semantic line breaks for CJK text</p>
   </header>
 
   <main>
